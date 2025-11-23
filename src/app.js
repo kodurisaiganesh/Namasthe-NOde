@@ -2,13 +2,22 @@ const express=require('express')
 
 const server=express();
 
-server.use("/reya",(req,res)=>
+
+server.get("/user",(req,res)=>
 {
-    res.send("Rey ety saiganesh koduri");
+    res.send("Welcome to the User");
 })
-server.use((req,res)=>
+server.post("/user",(req,res)=>
 {
-    res.send("Welcome to the Server");
+    res.send("Data Posted Successfully");
+})
+server.delete("/user",(req,res)=>
+{
+    res.send("Delete Successfully");
+})
+server.use("/",(req,res)=>
+{
+    res.send("Hello")
 })
 server.listen(4000,()=>
 {
