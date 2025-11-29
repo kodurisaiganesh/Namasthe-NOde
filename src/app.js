@@ -1,15 +1,30 @@
-const express=require('express')
-
+const express=require('express');
 const server=express();
 
-
-server.get("/user/:userid",(req,res)=>
+server.use("/user",(req,res,next)=>
 {
-    console.log(req.params);
-    res.send("Welcome to the User");
-})
-
-server.listen(4000,()=>
+    console.log("Hello");
+    next();
+    //res.send("Welcome to the user");
+},
+  (req,res,next)=>
 {
-    console.log("Server running");
-})
+    console.log("Hello 2nd");
+   // res.send("Welcome to the 2nd user");
+   next();
+},(req,res,next)=>
+{
+    console.log("#3rd user");
+    next();
+},
+(req,res,next)=>
+{
+    res.send("Finally we are coming")
+}
+
+   
+);
+server.listen((4444),()=>
+{
+    console.log("Server Running")
+});
