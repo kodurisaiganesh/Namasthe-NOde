@@ -3,8 +3,9 @@ const express=require('express')
 const server=express();
 
 
-server.get("/user",(req,res)=>
+server.get("/user/:userid",(req,res)=>
 {
+    console.log(req.params);
     res.send("Welcome to the User");
 })
 server.post("/user",(req,res)=>
