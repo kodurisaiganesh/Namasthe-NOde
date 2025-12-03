@@ -5,15 +5,11 @@ const User=require('./models/users')
 
 const Mongodb=require('./config/database')
 
-app.use(express.json())
+server.use(express.json())
 server.post('/signup',async(req,res)=>
 {
-   const user=new User({
-    firstName:"Srikar",
-    lastName:"Moluguri",
-    email:"srikar@gmail.com",
-    password:"srikar234"
-   });
+   const user=new User(req.body());
+
    try{
    await user.save();
    res.send("User DataSent Succesfully");
