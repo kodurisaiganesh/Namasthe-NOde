@@ -1,29 +1,40 @@
 const express = require('express');
 const server = express();
 
-const { auth, userauth } = require('./middlewears/auth');
+const User=require('./models/users')
 
-// Admin middleware for all /admin routes
-server.use("/admin", auth);
+const Mongodb=require('./config/database')
 
-// User route
-server.get("/user", userauth, (req, res) => {
-    console.log("Hello User data");
-    res.send("User data sent successfully");
-});
+app.use(express.json())
+server.post('/signup',async(req,res)=>
+{
+   const user=new User({
+    firstName:"Srikar",
+    lastName:"Moluguri",
+    email:"srikar@gmail.com",
+    password:"srikar234"
+   });
+   try{
+   await user.save();
+   res.send("User DataSent Succesfully");
+   }
+   catch(err)
+   {
+        res.status(400).send("Something Went Wrong");
+   }
+})
 
-// Admin route - get data
-server.get("/admin/getdata", (req, res) => {
-    res.send("All data sent");
-});
-
-// Admin route - delete data
-server.get("/admin/deletedata", (req, res) => {
-    console.log("Deleting the data");
-    res.send("All user data deleted");
-});
-
-// Server listener
-server.listen(4444, () => {
+Mongodb().then(()=>
+{
+    console.log(" DataBase Successfully COnnected");
+    server.listen(4444, () => {
     console.log("Server Running");
 });
+})
+.catch(()=>
+{
+    console.error("NOt Connected");
+})
+
+// Server listener
+

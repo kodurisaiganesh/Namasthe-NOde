@@ -1,14 +1,8 @@
 const mongoose=require('mongoose');
 
-const con=async()=>
+const Mongodb=async()=>
 {
-    await mongoose.connect("mongodb+srv://saiganesh1105_db_user:saiganesh@namasthenode.rsrzhir.mongodb.net/")
-}
-con.then(()=>
-{
-    console.log("Successfully COnnected");
-})
-.catch(()=>
-{
-    console.error("NOt Connected");
-})
+    await mongoose.connect("mongodb+srv://saiganesh1105_db_user:saiganesh@namasthenode.rsrzhir.mongodb.net/devTinder")
+};
+
+module.exports=Mongodb
