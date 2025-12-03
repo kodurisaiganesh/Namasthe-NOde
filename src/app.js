@@ -52,6 +52,30 @@ server.get('/feeds',async(req,res)=>{
     }
 })
 
+server.delete('/usersss',async(req,res)=>
+{
+    const userId=req.body._id;
+    try{
+        const user=await User.findByIdAndDelete({_id:userId});
+        res.send("User deleted Sucessfully");
+    }
+    catch(err){
+        res.status(401).send("Something Went Wrong");
+    }
+})
+
+server.patch('/getss',async(req,res)=>{
+    const data=req.body._id;
+    const user=req.body;
+    try{
+        await User.findByIdAndUpdate({_id:data},user);
+        res.send("Updated Sucessfully")
+    }
+    catch{
+        res.status(401).send("Something Went Wrong");
+    }
+})
+
 server.get('/feed',async(req,res)=>
 {
     try
