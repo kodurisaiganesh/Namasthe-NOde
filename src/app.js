@@ -16,10 +16,30 @@ server.post('/signup',async(req,res)=>
    }
    catch(err)
    {
-        res.status(400).send("Something Went Wrong");
+        res.status(400).send("Something Went Wrong"+err.message);
    }
 })
 
+server.post('/usty',async(req,res)=>{
+    const user=new User({
+        firstName:"Koduri Sai",
+        lastName:"Ganesh",
+        email:"saiganeshkoduri@gmail.com",
+        password:"sai12334",
+         Mobilenumber:"8464605073"
+    })
+    try
+    {
+    await user.save();
+    res.send("User Data Succesfully");
+    console.log(User.applyTimestamps(user))
+    }
+    catch(err)
+    {
+        res.status(401).send("Something went wrong"+err.message);
+    }
+    
+})
 server.get("/getdata",async(req,res)=>
 {
     const mailid=req.body.email;
@@ -64,17 +84,37 @@ server.delete('/usersss',async(req,res)=>
     }
 })
 
-server.patch('/getss',async(req,res)=>{
-    const data=req.body._id;
+server.patch('/getss/:userId',async(req,res)=>{
+    const userId=req.params?.userId;
     const user=req.body;
-    try{
-        await User.findByIdAndUpdate({_id:data},user);
+     try{
+    const allowed_updates=["firstName","lastName","gender","password","skills"];
+    const isallowupdates=Object.keys(user).every((k)=>
+        allowed_updates.includes(k));
+    if(!isallowupdates)
+    {
+        throw new Error("Update not allowed");
+    }
+    if(  user?.skills.length>10)
+    {
+        throw new Error("skills must be 10 only");
+    }
+   
+        await User.findByIdAndUpdate({_id:userId},user,
+            {
+                new: true, 
+                runValidators: true
+            }
+        );
         res.send("Updated Sucessfully")
     }
-    catch{
-        res.status(401).send("Something Went Wrong");
+    catch(err)
+    {
+        res.status(401).send("Something Went Wrong  "+err.message);
     }
 })
+
+
 
 server.get('/feed',async(req,res)=>
 {
