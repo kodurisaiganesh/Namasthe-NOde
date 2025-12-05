@@ -1,5 +1,5 @@
 const mongoose=require('mongoose')
-
+const validator=require('validator')
 const userSchema=new mongoose.Schema({
     firstName:{
         type:String,
@@ -18,18 +18,24 @@ const userSchema=new mongoose.Schema({
         maxlength:40,
         lowercase:true,
         validate(value){
-            const str=["@gmail.com","@yahoo.com"];
-            if(!str.some(d=>value.endsWith(d)))
-            {
-                throw new Error("please enter correct mail id");
-            }
+           if(!validator.isEmail(value))
+           {
+            throw new Error("Invalid email address");
+           }
         }
     },
     password:{
         type:String,
         minlength:4,
         maxlength:10,
-        required:true
+        required:true,
+        validate(value)
+        {
+            if(!validator.isStrongPassword(value))
+            {
+                throw new Error("ENter a strong password")
+            }
+        }
     },
     gender:{
         type:String,
