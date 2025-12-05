@@ -1,11 +1,58 @@
 const express = require('express');
 const server = express();
-
+const bcrypt=require('bcrypt');
 const User=require('./models/users')
-
+const {ValidationSignup}=require('./utils/ValidationSignup')
 const Mongodb=require('./config/database')
 
 server.use(express.json())
+
+server.post('/signupp',async(req,res)=>{
+    try{
+        //checking the creditnials
+        ValidationSignup(req);
+        const {firstName,lastName,email,password}=req.body;
+        //encrpyting the password
+        const passwordhash=await bcrypt.hash(password,10);
+        const user=new User({
+            firstName,
+            lastName,
+            email,
+            password:passwordhash
+        })
+
+      await user.save();
+      res.send("Upadated Successfully");
+
+    }
+    catch(err)
+    {
+        res.status(401).send("Error Message "+err.message);
+    }
+})
+
+server.post('/loginn',async(req,res)=>{
+    try
+    {
+        const{email,password}=req.body;
+        const user= await User.findOne({email:email});
+        if(!user)
+        {
+            throw new  Error("Enter Correct mail id");
+        }
+     const passwordcom=await bcrypt.compare(password,user.password);
+        if(passwordcom){
+            res.send("Login Succeddully");
+        }
+        else{
+            throw new Error("Password is not correct")
+        }
+    }
+    catch(err)
+    {
+        res.status(400).send("Something went Wrong "+err.message);
+    }
+})
 server.post('/signup',async(req,res)=>
 {
    const user=new User(req.body);
