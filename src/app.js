@@ -4,9 +4,12 @@ const bcrypt=require('bcrypt');
 const User=require('./models/users')
 const {ValidationSignup}=require('./utils/ValidationSignup')
 const Mongodb=require('./config/database')
-
-server.use(express.json())
-
+const jwt=require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+const {userauth}=require('./middlewears/auth')
+const user = require('./models/users');
+server.use(express.json());
+server.use(cookieParser());
 server.post('/signupp',async(req,res)=>{
     try{
         //checking the creditnials
@@ -40,9 +43,13 @@ server.post('/loginn',async(req,res)=>{
         {
             throw new  Error("Enter Correct mail id");
         }
-     const passwordcom=await bcrypt.compare(password,user.password);
+     const passwordcom=await user.validatePassword(password)
         if(passwordcom){
-            res.send("Login Succeddully");
+          const token=await user.getJWT();
+          console.log(token);
+          res.cookie("token",token);
+          
+          res.send("Login Success");
         }
         else{
             throw new Error("Password is not correct")
@@ -53,6 +60,19 @@ server.post('/loginn',async(req,res)=>{
         res.status(400).send("Something went Wrong "+err.message);
     }
 })
+
+server.get("/profile",userauth,async(req,res)=>{
+    try{
+       const user=req.user;
+       res.send(user);
+    }
+    catch(err)
+    {
+        res.status(401).send("Something Went Wrong "+err.message);
+    }
+
+})
+
 server.post('/signup',async(req,res)=>
 {
    const user=new User(req.body);

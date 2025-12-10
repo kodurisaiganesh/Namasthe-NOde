@@ -1,3 +1,6 @@
+const jwt=require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+const User=require('../models/users')
 const auth=(req,res,next)=>
 {
     const token="abc";
@@ -10,16 +13,26 @@ const auth=(req,res,next)=>
         res.status(401).send("Something went wrong");
     }
 }
-const userauth=(req,res,next)=>
+const userauth=async (req,res,next)=>
 {
-    const tokens="Abcd";
-    const isauth=tokens==="Abcd";
-    if(isauth)
+    try{
+    const {token}=req.cookies;
+    if(!token)
     {
-        next();
+        throw new Error("Invalid token");
     }
-    else{
-        res.status(401).send("Something happen go and check");
+    const decodemsg=jwt.verify(token,"Saiganesh1");
+    const {_id}=decodemsg;
+    const user=await User.findById(_id);
+    if(!user)
+    {
+        throw new Error("User not found");
+    }
+    req.user=user;
+    next();
+    }
+    catch(err){
+        res.status(401).send("Error "+err.message);
     }
 }
 
