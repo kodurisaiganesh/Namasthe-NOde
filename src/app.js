@@ -2,76 +2,18 @@ const express = require('express');
 const server = express();
 const bcrypt=require('bcrypt');
 const User=require('./models/users')
-const {ValidationSignup}=require('./utils/ValidationSignup')
 const Mongodb=require('./config/database')
 const jwt=require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
-const {userauth}=require('./middlewears/auth')
-const user = require('./models/users');
+const userAuthing=require('./routes/auth')
+const profileAuth=require('./routes/profile');
+const requetAuth=require('./routes/request');
 server.use(express.json());
 server.use(cookieParser());
-server.post('/signupp',async(req,res)=>{
-    try{
-        //checking the creditnials
-        ValidationSignup(req);
-        const {firstName,lastName,email,password}=req.body;
-        //encrpyting the password
-        const passwordhash=await bcrypt.hash(password,10);
-        const user=new User({
-            firstName,
-            lastName,
-            email,
-            password:passwordhash
-        })
 
-      await user.save();
-      res.send("Upadated Successfully");
-
-    }
-    catch(err)
-    {
-        res.status(401).send("Error Message "+err.message);
-    }
-})
-
-server.post('/loginn',async(req,res)=>{
-    try
-    {
-        const{email,password}=req.body;
-        const user= await User.findOne({email:email});
-        if(!user)
-        {
-            throw new  Error("Enter Correct mail id");
-        }
-     const passwordcom=await user.validatePassword(password)
-        if(passwordcom){
-          const token=await user.getJWT();
-          console.log(token);
-          res.cookie("token",token);
-          
-          res.send("Login Success");
-        }
-        else{
-            throw new Error("Password is not correct")
-        }
-    }
-    catch(err)
-    {
-        res.status(400).send("Something went Wrong "+err.message);
-    }
-})
-
-server.get("/profile",userauth,async(req,res)=>{
-    try{
-       const user=req.user;
-       res.send(user);
-    }
-    catch(err)
-    {
-        res.status(401).send("Something Went Wrong "+err.message);
-    }
-
-})
+server.use('/',userAuthing);
+server.use('/',profileAuth);
+server.use('/',requetAuth);
 
 server.post('/signup',async(req,res)=>
 {
