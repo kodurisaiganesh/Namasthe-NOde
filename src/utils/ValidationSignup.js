@@ -21,4 +21,21 @@ const ValidationSignup=(req)=>{
 
 
 }
-module.exports={ValidationSignup}
+const validEditdata = (req) => {
+    const allowEditfields = [
+        "firstName",
+        "lastName",
+        "email",
+        "gender",
+        "skills",
+        "about",
+    ];
+
+    const editOptions = Object.keys(req.body).every((field) =>
+        allowEditfields.includes(field)
+    );
+
+    return editOptions;
+};
+
+module.exports={ValidationSignup,validEditdata}

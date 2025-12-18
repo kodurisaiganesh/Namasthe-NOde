@@ -8,12 +8,14 @@ const cookieParser = require('cookie-parser');
 const userAuthing=require('./routes/auth')
 const profileAuth=require('./routes/profile');
 const requetAuth=require('./routes/request');
+const UserRouter=require('./routes/user')
 server.use(express.json());
 server.use(cookieParser());
 
 server.use('/',userAuthing);
 server.use('/',profileAuth);
 server.use('/',requetAuth);
+server.use('/',UserRouter);
 
 server.post('/signup',async(req,res)=>
 {
@@ -28,6 +30,7 @@ server.post('/signup',async(req,res)=>
         res.status(400).send("Something Went Wrong"+err.message);
    }
 })
+
 
 server.post('/usty',async(req,res)=>{
     const user=new User({

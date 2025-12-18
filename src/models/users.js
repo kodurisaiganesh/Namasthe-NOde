@@ -53,6 +53,11 @@ const userSchema=new mongoose.Schema({
     address:{
         type:String
     },
+    about:{
+        type:String,
+        minlength:10,
+        maxlength:80
+    },
     Mobilenumber:{
         type:String,
         minlength:10,
